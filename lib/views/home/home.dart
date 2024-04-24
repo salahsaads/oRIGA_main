@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -5,6 +7,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:project/Theme/colors.dart';
+import 'package:project/views/Add%20_a_product.dart';
+import 'package:project/views/Adding_waste.dart';
 import 'package:project/widgets/Custom_Card_Prodect.dart';
 import 'package:project/widgets/Custom_Card_Waste.dart';
 
@@ -52,11 +56,21 @@ class _Home_ViewState extends State<Home_View>
               SizedBox(
                 height: 30.h,
               ),
-              Custom_button(text: 'اضافه منتجات'),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Add_prodect()));
+                  },
+                  child: Custom_button(text: 'اضافه منتجات')),
               SizedBox(
                 height: 30.h,
               ),
-              Custom_button(text: 'اضافه  مخلفات')
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Add_waste()));
+                  },
+                  child: Custom_button(text: 'اضافه  مخلفات'))
             ],
           ),
         ),
