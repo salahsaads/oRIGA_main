@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,51 +5,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:project/Theme/colors.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:project/firbase_service/Service.dart';
-import 'package:project/views/home/home.dart';
 
-class Add_prodect extends StatefulWidget {
-  const Add_prodect({super.key});
+class Add_Point extends StatefulWidget {
+  const Add_Point({super.key});
 
   @override
-  State<Add_prodect> createState() => _Add_prodectState();
+  State<Add_Point> createState() => _Add_PointState();
 }
 
-class _Add_prodectState extends State<Add_prodect> {
-  File? file2;
-  bool getimage = false;
-  String? url2;
-  TextEditingController name = TextEditingController();
-  TextEditingController point = TextEditingController();
-  XFile? image;
+class _Add_PointState extends State<Add_Point> {
   bool ok = false;
-  UploadImage_camera3() async {
-    ImagePicker picker = ImagePicker();
-    image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() {
-        file2 = File(image!.path);
-        getimage = true;
-      });
-    }
-  }
-
-  Future<void> add_image() async {
-    var metadata = SettableMetadata(
-      contentType: "image/jpeg",
-    );
-    var imgname = basename(image!.path);
-    var ref = FirebaseStorage.instance.ref("$imgname");
-    await ref.putFile(file2!, metadata);
-
-    url2 = await ref.getDownloadURL();
-  }
-
+  TextEditingController phone = TextEditingController();
+  TextEditingController point = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +32,7 @@ class _Add_prodectState extends State<Add_prodect> {
       appBar: AppBar(
         backgroundColor: primarycolor,
         title: Text(
-          'اضافه منتجات',
+          'اضافه نقط',
           style: TextStyle(
               fontFamily: 'Cairo-Regular',
               fontSize: 25.sp,
@@ -86,68 +52,11 @@ class _Add_prodectState extends State<Add_prodect> {
                   SizedBox(
                     height: 30.h,
                   ),
-                  getimage == true
-                      ? Container(
-                          width: 200.w,
-                          height: 200.h,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.r),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: FileImage(
-                                  file2!,
-                                ),
-                              )),
-                        )
-                      : Container(
-                          width: 200.w,
-                          height: 200.h,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.r),
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: AssetImage(
-                                      'assets/images/images (1).png'))),
-                        ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
 
-                  ElevatedButton(
-                      onPressed: () {
-                        UploadImage_camera3();
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            primarycolor), // Change button color
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                15.r), // Customize border radius
-                          ),
-                        ),
-                      ),
-                      child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        child: Text(
-                          'اضافه صوره',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white, // Text color
-                            fontWeight: FontWeight.bold,
-                            fontFamily:
-                                'NotoKufiArabic', // Specify font family if needed
-                          ),
-                        ),
-                      )),
-                  SizedBox(
-                    height: 30.h,
-                  ),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      ' :اسم المنتج',
+                      'رقم الهاتف',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontFamily: 'NotoKufiArabic',
@@ -164,7 +73,8 @@ class _Add_prodectState extends State<Add_prodect> {
                   //           borderRadius: BorderRadius.circular(15.r))),
                   // ),
                   TextFormField(
-                    controller: name,
+                    controller: phone,
+                    keyboardType: TextInputType.phone,
                     cursorColor: primarycolor,
                     textDirection: TextDirection.rtl,
                     decoration: InputDecoration(
@@ -234,17 +144,30 @@ class _Add_prodectState extends State<Add_prodect> {
                           setState(() {
                             ok = true;
                           });
-                          await add_image();
-
-                          await Service().addUser_prodect(
-                              name: name.text,
-                              point: int.parse(point.text),
-                              image: url2!);
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Home_View()));
+                          String x = await Service().Add_point(
+                              phone: phone.text, point: int.parse(point.text));
+                          if (x == 'yes') {
+                            setState(() {
+                              ok = false;
+                            });
+                            phone.clear();
+                            point.clear();
+                            AwesomeDialog(
+                              context: context,
+                              animType: AnimType.scale,
+                              dialogType: DialogType.success,
+                              body: Center(
+                                child: Text(
+                                  'تم اضافه النقط بنجاح ',
+                                  style: TextStyle(
+                                      color: primarycolor,
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'Marhey'),
+                                ),
+                              ),
+                            ).show();
+                          }
                         } else {
                           AwesomeDialog(
                             context: context,
@@ -277,7 +200,7 @@ class _Add_prodectState extends State<Add_prodect> {
                         padding:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         child: Text(
-                          'اضافه',
+                          '  اضافه النقط',
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.white, // Text color

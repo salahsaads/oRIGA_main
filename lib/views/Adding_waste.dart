@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:project/Theme/colors.dart';
 import 'package:path/path.dart';
@@ -34,7 +36,7 @@ class _Add_wasteState extends State<Add_waste> {
 
   UploadImage_camera3() async {
     ImagePicker picker = ImagePicker();
-    image = await picker.pickImage(source: ImageSource.camera);
+    image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       setState(() {
@@ -107,7 +109,7 @@ class _Add_wasteState extends State<Add_waste> {
                   SizedBox(
                     height: 30.h,
                   ),
-        
+
                   ElevatedButton(
                       onPressed: () {
                         UploadImage_camera3();
@@ -198,7 +200,7 @@ class _Add_wasteState extends State<Add_waste> {
                   //       border: OutlineInputBorder(
                   //           borderRadius: BorderRadius.circular(15.r))),
                   // )
-        
+
                   TextFormField(
                     controller: point,
                     keyboardType: TextInputType.number,
@@ -222,18 +224,40 @@ class _Add_wasteState extends State<Add_waste> {
                   ),
                   ElevatedButton(
                       onPressed: () async {
-                        setState(() {
-                          ok = true;
-                        });
-                        await add_image();
-        
-                        await Service().addUser_waste(
-                            name: name.text,
-                            point: int.parse(point.text),
-                            image: url2!);
-        
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Home_View()));
+                        bool result =
+                            await InternetConnectionChecker().hasConnection;
+                        if (result == true) {
+                          setState(() {
+                            ok = true;
+                          });
+                          await add_image();
+
+                          await Service().addUser_waste(
+                              name: name.text,
+                              point: int.parse(point.text),
+                              image: url2!);
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home_View()));
+                        } else {
+                          AwesomeDialog(
+                            context: context,
+                            animType: AnimType.scale,
+                            dialogType: DialogType.error,
+                            body: Center(
+                              child: Text(
+                                'تاكد باتصالك بالانترنت',
+                                style: TextStyle(
+                                    color: primarycolor,
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Marhey'),
+                              ),
+                            ),
+                          ).show();
+                        }
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(

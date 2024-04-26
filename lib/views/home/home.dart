@@ -1,13 +1,18 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import 'package:project/Theme/colors.dart';
+import 'package:project/model/Card_prodect.dart';
+import 'package:project/model/Card_wast_model.dart';
 import 'package:project/views/Add%20_a_product.dart';
+import 'package:project/views/Add_point.dart';
 import 'package:project/views/Adding_waste.dart';
 import 'package:project/widgets/Custom_Card_Prodect.dart';
 import 'package:project/widgets/Custom_Card_Waste.dart';
@@ -70,12 +75,21 @@ class _Home_ViewState extends State<Home_View>
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Add_waste()));
                   },
-                  child: Custom_button(text: 'اضافه  مخلفات'))
+                  child: Custom_button(text: 'اضافه  مخلفات')),
+              SizedBox(
+                height: 30.h,
+              ),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Add_Point()));
+                  },
+                  child: Custom_button(text: 'اضافه  نقط'))
             ],
           ),
         ),
       ),
-      backgroundColor: secondarycolor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [
           Builder(
@@ -146,23 +160,66 @@ class _Home_ViewState extends State<Home_View>
 }
 
 class Body_Home1 extends StatelessWidget {
-  const Body_Home1({super.key});
-
+  Body_Home1({super.key});
+  CollectionReference Prodect =
+      FirebaseFirestore.instance.collection('prodect');
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Custom_Card_Prodect(),
-    );
+    return StreamBuilder<QuerySnapshot>(
+        stream: Prodect.orderBy("CreateTime", descending: true).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Card_Prodect_Model> messageList = [];
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              messageList
+                  .add(Card_Prodect_Model.fromJson(snapshot.data!.docs[i]));
+            }
+
+            return Column(children: [
+              Expanded(
+                child: ListView.builder(
+                    itemCount: messageList.length,
+                    itemBuilder: (context, index) {
+                      return Custom_Card_Prodect(
+                          card_prodect_model: messageList[index]);
+                    }),
+              )
+            ]);
+          } else {
+            return ModalProgressHUD(inAsyncCall: true, child: Scaffold());
+          }
+        });
   }
 }
 
 class Body_Home2 extends StatelessWidget {
-  const Body_Home2({super.key});
-
+  Body_Home2({super.key});
+  CollectionReference waste = FirebaseFirestore.instance.collection('waste');
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Custom_Card_Waste(),
-    );
+    return StreamBuilder<QuerySnapshot>(
+        stream: waste.orderBy("CreateTime", descending: true).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Card_Prodect_Waste> messageList = [];
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              messageList
+                  .add(Card_Prodect_Waste.fromJson(snapshot.data!.docs[i]));
+            }
+
+            return Column(children: [
+              Expanded(
+                child: ListView.builder(
+                    itemCount: messageList.length,
+                    itemBuilder: (context, index) {
+                      return Custom_Card_Waste(
+                          card_prodect_waste: messageList[index]);
+                    }),
+              )
+            ]);
+          } else {
+            return ModalProgressHUD(inAsyncCall: true, child: Scaffold());
+          }
+        });
   }
 }

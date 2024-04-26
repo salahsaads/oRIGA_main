@@ -10,7 +10,7 @@ class Custom_button extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 55.h,
-      width: 450.w,
+      width: 500.w,
       alignment: Alignment.center,
       decoration: BoxDecoration(
           // border: Border.all(color: Colors.black, width: 2),
@@ -25,13 +25,17 @@ class Custom_button extends StatelessWidget {
           ],
           borderRadius: BorderRadius.circular(10.r)),
       child: Padding(
-        padding: EdgeInsets.only(left: 20.w, right: 20.w),
+        padding: EdgeInsets.only(
+          left: 8.w,
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Icon(
               Icons.add_box,
-              size: 34.sp,
+              size: 24.sp,
+            ),
+            SizedBox(
+              width: 30.w,
             ),
             Text(
               text!,

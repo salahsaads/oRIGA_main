@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/Theme/colors.dart';
+import 'package:project/firbase_service/Service.dart';
+import 'package:project/model/Card_prodect.dart';
 
 class Custom_Card_Prodect extends StatelessWidget {
-  const Custom_Card_Prodect({
+  Card_Prodect_Model card_prodect_model;
+  Custom_Card_Prodect({
+    required this.card_prodect_model,
     super.key,
   });
 
@@ -29,7 +33,7 @@ class Custom_Card_Prodect extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
-                      image: AssetImage('assets/images/images (1).jpg'),
+                      image: NetworkImage('${card_prodect_model.image}'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -40,14 +44,14 @@ class Custom_Card_Prodect extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        'نقطه  200',
+                        'نقطه  ${card_prodect_model.point}',
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        'الاسم',
+                        '${card_prodect_model.name}',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w700),
                       )
@@ -59,10 +63,15 @@ class Custom_Card_Prodect extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.delete_sharp,
-              color: primarycolor,
-              size: 28.sp,
+            child: GestureDetector(
+              onTap: () {
+                Service().delete_service1(card_prodect_model.name); 
+              },
+              child: Icon(
+                Icons.delete_sharp,
+                color: primarycolor,
+                size: 28.sp,
+              ),
             ),
           )
         ],

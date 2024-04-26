@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/Theme/colors.dart';
+import 'package:project/firbase_service/Service.dart';
+import 'package:project/model/Card_wast_model.dart';
 
 class Custom_Card_Waste extends StatelessWidget {
-  const Custom_Card_Waste({
+  Card_Prodect_Waste card_prodect_waste;
+  Custom_Card_Waste({
+    required this.card_prodect_waste,
     super.key,
   });
 
@@ -30,7 +33,7 @@ class Custom_Card_Waste extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
-                      image: AssetImage('assets/images/images (1).jpg'),
+                      image: NetworkImage('${card_prodect_waste.image}'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -38,24 +41,17 @@ class Custom_Card_Waste extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 30.w, right: 30.w, top: 10.h),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        '   نقطه 200 ',
+                        'نقطه  ${card_prodect_waste.point}',
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        ' :الكيلوا',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w700),
-                      ),
-                      SizedBox(
-                        width: 50.w,
-                      ),
-                      Text(
-                        'الاسم',
+                        '${card_prodect_waste.name}',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w700),
                       )
@@ -67,10 +63,15 @@ class Custom_Card_Waste extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.delete_sharp,
-              color: primarycolor,
-              size: 28.sp,
+            child: GestureDetector(
+              onTap: () {
+                Service().delete_service2(card_prodect_waste.name);
+              },
+              child: Icon(
+                Icons.delete_sharp,
+                color: primarycolor,
+                size: 28.sp,
+              ),
             ),
           )
         ],
